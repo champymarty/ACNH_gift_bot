@@ -36,7 +36,7 @@ async def _giftforwarding(ctx, *args):
             data.usersID_mapping[match] = ctx.author.id
             member = await ctx.guild.fetch_member(match)
             data.saveData()
-            await sendMessage(ctx.message, "You gift special person is : {}\nTake good care of him/her !".format(member.nick), "Gift matcher")
+            await sendMessage(ctx.message, "Your gift receiver is : {}\nTake good care of them !".format(member.nick), "Gift matcher")
         else:
             await sendMessage(ctx.message, "Everybody already received a gift ! You cannot give gift anymore ! Next gift reset in {}".format(timeChecker.getTimeUntilNextReset()), "Everybody as a gift", error=True)
     else:
@@ -72,7 +72,7 @@ async def _giftforwarding(ctx, *args):
 @bot.command(pass_context = True , aliases=["reset_gifts", "rg"])
 async def _resetGifts(ctx):
     data.usersID_mapping.clear()
-    await sendMessage(ctx.message, "The gifts where just reset !", "Reset information")
+    await sendMessage(ctx.message, "The gifts were just reset !", "Reset information")
 
 @bot.command(pass_context = True , aliases=["time"])
 async def _showTime(ctx):

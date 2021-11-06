@@ -6,7 +6,7 @@ import pytz
 class TimerChecker(commands.Cog):
     def __init__(self, data):
         self.data = data
-        self.timeZone = pytz.utc
+        self.timeZone = pytz.timezone("America/New_York")
         self._timeReset = datetime.datetime(2011, 8, 15, 0, 0, 0, 0, self.timeZone)
         self.timeChecker.start()
 
