@@ -13,9 +13,30 @@ class TimerChecker(commands.Cog):
     def cog_unload(self):
         self.timeChecker.cancel()
 
-    @tasks.loop(seconds=60)
+    @tasks.loop(seconds=30)
     async def timeChecker(self):
         now = datetime.datetime.now(tz=self.timeZone)
-        if now.hour == self._timeReset.hour and now.minute == self._timeReset.minute:
-            self.data.usersID_mapping.clear()
-            self.data.saveData()
+        if now.hour == self._timeReset.hour:
+            self._timeReset = datetime.datetime(now.year, now.month, now.day + 1,
+                self._timeReset.hour,
+                self._timeReset.minute,
+                self._timeReset.second,
+                self._timeReset.microsecond,
+                self.timeZone
+            )
+            deltaSeconds = (self._timeReset - now).total_seconds()
+            print(deltaSeconds)
+            if deltaSeconds <= 30:
+                self.data.usersID_mapping.clear()
+                self.data.saveData()
+
+    def getTimeUntilNextReset(self):
+        now = datetime.datetime.now(tz=self.timeZone)
+        self._timeReset = datetime.datetime(now.year, now.month, now.day + 1,
+            self._timeReset.hour,
+            self._timeReset.minute,
+            self._timeReset.second,
+            self._timeReset.microsecond,
+            self.timeZone
+        )
+        return str(self._timeReset - now).split(".")[0]
