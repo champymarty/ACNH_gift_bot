@@ -25,7 +25,7 @@ async def _giftforwarding(ctx, *args):
     if len(args) == 0:
         if ctx.author.id not in data.usersID:
             data.usersID.add(ctx.author.id)
-            data.saveData()
+            data.saveUser()
             await sendMessage(ctx.message, "This is your first time using this command ! You where just added to the user list ! Do the command again if you want to get a gift budy", "Registration to gift exhanges successfull")
             return
         if len(data.usersID) <= 1:
@@ -35,7 +35,7 @@ async def _giftforwarding(ctx, *args):
         if match is not None:
             data.usersID_mapping[match] = ctx.author.id
             member = await ctx.guild.fetch_member(match)
-            data.saveData()
+            data.saveMapping()
             await sendMessage(ctx.message, "Your gift receiver is : {}\nTake good care of them !".format(member.nick), "Gift matcher")
         else:
             await sendMessage(ctx.message, "Everybody already received a gift ! You cannot give gift anymore ! Next gift reset in {}".format(timeChecker.getTimeUntilNextReset()), "Everybody as a gift", error=True)
@@ -54,7 +54,7 @@ async def _giftforwarding(ctx, *args):
         elif args[0].lower() == "remove" or args[0].lower() == "r":
             if ctx.author.id in data.usersID:
                 data.usersID.remove(ctx.author.id)
-                data.saveData()
+                data.saveUser()
                 await sendMessage(ctx.message, "You where just remove from the gift exchanges !", "Removed successfully !")
             else:
                 await sendMessage(ctx.message, "You are not register in the gifts exchanges !", "Not register error", error=True)
@@ -72,6 +72,7 @@ async def _giftforwarding(ctx, *args):
 @bot.command(pass_context = True , aliases=["reset_gifts", "rg"])
 async def _resetGifts(ctx):
     data.usersID_mapping.clear()
+    data.saveMapping()
     await sendMessage(ctx.message, "The gifts were just reset !", "Reset information")
 
 @bot.command(pass_context = True , aliases=["time"])
