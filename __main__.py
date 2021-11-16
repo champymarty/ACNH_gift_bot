@@ -34,9 +34,9 @@ async def _giftforwarding(ctx, *args):
         match = get_match(ctx.author.id)
         if match is not None:
             data.usersID_mapping[match] = ctx.author.id
-            member = await ctx.guild.fetch_member(match)
             data.saveMapping()
-            await sendMessage(ctx.message, "Your gift receiver is : {}\nTake good care of them !".format(member.nick), "Gift matcher")
+            nameMatch = await getName(ctx, match)
+            await sendMessage(ctx.message, "Your gift receiver is : {}\nTake good care of them !".format(nameMatch), "Gift matcher")
         else:
             await sendMessage(ctx.message, "Everybody already received a gift ! You cannot give gift anymore ! Next gift reset in {}".format(timeChecker.getTimeUntilNextReset()), "Everybody as a gift", error=True)
     else:
@@ -45,9 +45,9 @@ async def _giftforwarding(ctx, *args):
         elif args[0].lower() == "all":
             message = ""
             for receiver, giver in data.usersID_mapping.items():
-                memberReceiver = await ctx.guild.fetch_member(receiver)
-                memberGiver = await ctx.guild.fetch_member(giver)
-                message += "**{}** is getting a gift from *{}* !\n".format(memberReceiver.nick, memberGiver.nick)
+                nameReceiver = await getName(ctx, receiver)
+                nameGiver = await getName(ctx, giver)
+                message += "**{}** is getting a gift from *{}* !\n".format(nameReceiver, nameGiver)
             if message == "":
                 message = "*No gifts exchanges today :(*"
             await sendMessage(ctx.message, message, "Gifts exchanges of the days !")
@@ -80,6 +80,13 @@ async def _showTime(ctx):
     await sendMessage(ctx.message, "", "gifts reset in {}".format(timeChecker.getTimeUntilNextReset()))
     
 
+async def getName(ctx, userID):
+    member = await ctx.guild.fetch_member(userID)
+    if member.nick is None:
+        return member.name
+    else:
+        return member.nick
+    
 def getNumberOfGiftGiven(giverId):
     count = 0
     for giver in data.usersID_mapping.values():
